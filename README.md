@@ -71,7 +71,8 @@ Travel_Agentic_RL/
 │   └── infer.sh              #   推理评估
 │
 ├── .env.example              # 环境变量模板（复制为 .env）
-└── requirements.txt
+├── requirements.txt
+└── LICENSE                   # MIT
 ```
 
 ---
@@ -274,3 +275,7 @@ python src/sample_data.py       # 人工核验任意数据或输出样例
 ## 致谢
 
 训练框架基于 [ms-swift](https://github.com/modelscope/ms-swift)（Apache-2.0）；Agent 工具基类来自 [qwen-agent](https://github.com/QwenLM/Qwen-Agent)；基座模型为 Qwen3。
+
+## License
+
+[MIT](LICENSE)
