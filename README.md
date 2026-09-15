@@ -74,8 +74,6 @@ Travel_Agentic_RL/
 └── requirements.txt
 ```
 
-> `ms-swift/`、`model/`、`output/`、`data/` 均不在仓库中，需按下文自行安装或生成。
-
 ---
 
 ## 快速开始
@@ -109,7 +107,43 @@ cp .env.example .env
 
 ### 4. 准备数据
 
-**本仓库不含数据集**（`data/` 已在 `.gitignore` 中排除）。复现训练需按下节管线自行生成，产出 `data/final/` 下的四份 jsonl：
+训练数据为 jsonl，每行一条样本，字段为 `id` + `conversations`。`conversations` 是一条完整的多轮工具交互轨迹：
+
+```json
+{
+  "id": "7422f7b075a69ed7f8648f06564279db",
+  "conversations": [
+    {
+      "role": "system",
+      "content": "你是旅行规划助手，需要先用工具获取事实，再给最终回答。\n每一轮只能二选一输出…\n<tools>…工具 JSON Schema…</tools>"
+    },
+    {
+      "role": "user",
+      "content": "长沙到乌鲁木齐10月1号高铁和飞机票价对比一下，哪个更方便"
+    },
+    {
+      "role": "assistant",
+      "content": "<think>用户想对比高铁和飞机票价，需要分别调用火车票搜索和航班搜索，这两个调用相互独立可以并行。</think>\n\n<tool_call>\n{'name': 'train_tickets_search', 'arguments': '{\"date\": \"2026-10-01\", \"from_city\": \"长沙\", \"to_city\": \"乌鲁木齐\"}'}\n</tool_call>\n<tool_call>\n{'name': 'flights_search', 'arguments': '{\"date\": \"2026-10-01\", \"from_city\": \"长沙\", \"to_city\": \"乌鲁木齐\"}'}\n</tool_call>"
+    },
+    {
+      "role": "user",
+      "content": "<tool_response>\n[\"直达车次 Z294，价格 432 元，07:15 从长沙站出发…\"]\n</tool_response>"
+    },
+    {
+      "role": "assistant",
+      "content": "<answer>\n长沙到乌鲁木齐10月1日的高铁和飞机对比如下：\n\n**🚄 火车/高铁**：高铁 589 元约 14 小时…\n**✈️ 飞机**：1280-2450 元，约 4.5 小时…\n</answer>"
+    }
+  ]
+}
+```
+
+要点：
+
+- **工具结果作为 `role: "user"` 消息注入**，用 `<tool_response>` 包裹（不是 `tool` 角色）。
+- 模型可在同一轮**并行发起多个 `<tool_call>`**；信息足够后只输出一次 `<answer>`。
+- `<tool_call>` 内容为 Python 风格单引号字典（`{'name': …}`），**并非合法 JSON**，因此解析统一走 `json_repair` 容错处理。
+
+按用途切分为四份：
 
 | 文件 | 用途 | 规模 |
 |------|------|------|
@@ -117,8 +151,6 @@ cp .env.example .env
 | `data/final/sft_val.jsonl` | SFT 验证集 | 31 条 |
 | `data/final/rl.jsonl` | GRPO 训练集（同时充当 LLM-Judge 的 gold answer 库） | 200 条 |
 | `data/final/test_final.jsonl` | 最终评估测试集 | 80 条 |
-
-每行格式为 `{"id": "...", "conversations": [{"role", "content"}, ...]}`。
 
 ---
 
