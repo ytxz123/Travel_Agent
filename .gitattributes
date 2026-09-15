@@ -1,0 +1,19 @@
+# 统一换行符，避免跨平台协作时出现问题
+* text=auto eol=lf
+
+# Shell 脚本必须保持 LF，否则在 Linux/WSL 下会报 bad interpreter: ^M
+*.sh text eol=lf
+
+# Windows 专用脚本保留 CRLF
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+
+# 二进制文件不做换行符转换
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.safetensors binary
+*.bin  binary

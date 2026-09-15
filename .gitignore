@@ -1,0 +1,53 @@
+# ===== 密钥与本地配置（切勿提交）=====
+.env
+.env.local
+
+# ===== 本地工具配置（含本机路径）=====
+.claude/
+.vscode/
+.idea/
+
+# ===== 第三方框架源码（请按 README 自行安装 ms-swift）=====
+ms-swift/
+
+# ===== 模型权重与训练产物 =====
+model/
+output/
+*.safetensors
+*.bin
+*.pth
+*.ckpt
+
+# ===== 数据集（体积大，按 README 数据管线自行生成）=====
+data/
+
+# ===== 项目文档（分析/讲解文档，不入库）=====
+docs/
+
+# ===== 散落的临时文件 =====
+tzy.json
+*.log
+*.tmp
+
+# ===== 开发过程用的 notebook（已被 src/*.py 取代，且内含大量输出）=====
+src/notebooks/
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# ===== Jupyter =====
+.ipynb_checkpoints/
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
